@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("postgresql://neondb_owner:qFfK0ThC5sGg@ep-divine-wind-a5t6o1sp.us-east-2.aws.neon.tech/fittnes.db?sslmode=require")
+}
+ 
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  workouts  Workout[]
+  goals     Goal[]
+  createdAt DateTime @default(now())
+}
+
+model Workout {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  type        String
+  duration    Int      // Kohezgjatja ne minuta
+  date        DateTime
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Goal {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  description String
+  targetDate  DateTime
+  completed   Boolean  @default(false)
+  user        User     @relation(fields: [userId], references: [id])
+}
+model Exercise {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  name       String
+  duration   Int      // Koha e shpenzuar (në minuta)
+  calories   Int?     // Opsionale: kalori të djegura
+  date       DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+}
